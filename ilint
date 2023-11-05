@@ -1,0 +1,64 @@
+#!/bin/sh
+
+build() {
+    if [ "$BUILD" ]; then "$BUILD"
+    elif [ -f 'Makefile' ]; then make
+    elif [ -f 'makefile' ]; then make
+    elif [ -f 'build.sh' ]; then ./build.sh
+    elif [ -f 'make.sh' ]; then ./make.sh
+    elif [ -f 'build' ]; then ./build
+    elif [ -f 'make' ]; then ./make
+    else
+        echo "Error: no makefile or build script found in the current directory"
+        echo "Please set the BUILD environment variable to your build command"
+        exit 1
+    fi
+}
+
+check_build() {
+    path="$1"
+    if build >/dev/null 2>/dev/null; then
+        echo "$path:$lineno REDUNDANT"
+    else
+        echo "$path:$lineno required"
+    fi
+}
+
+process_file() {
+    path="$1"
+    basename="$(basename "$path" ".${path##*.}")"
+    mv "$path" "$path.orig"
+    grep -n '^#include' "$path.orig" | cut -d':' -f1 |
+    while read -r lineno; do
+        line="$(sed "${lineno}q;d" "$path.orig")"
+        if [ "${line%.*}." != "#include \"$basename." ]; then
+            sed "${lineno}d" "$path.orig" > "$path"
+            check_build "$path"
+        fi
+    done
+    mv "$path.orig" "$path"
+}
+
+process_directory() {
+    find "$1" -name '*.c' -o -name '*.C' -o -name '*.cc' -o -name '*.cpp' -o \
+        -name '*.cxx' -o -name '*.c++' -o -name '*.h' -o -name '*.H' -o \
+        -name '*.hh' -o -name '*.hpp' -o -name '*.hxx' -o -name '*.h++' |
+    while read -r path; do
+        process_file "$path"
+    done
+}
+
+main() {
+    path="${1:-.}"
+    if ! build >/dev/null 2>/dev/null; then
+        echo "Error: initial test build failed"
+        exit 1
+    fi
+    if [ -d "$path" ]; then
+        process_directory "$path"
+    else
+        process_file "$path"
+    fi
+}
+
+main "$@"
