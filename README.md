@@ -13,10 +13,9 @@ All C/C++ files and header files in each `<path>` will be checked.
 If your build command is non-standard, you can set the `BUILD` environment
 variable to your build command.
 
-During processing, files will be moved to `<filename>.orig`, so make sure that
-there are no `.orig` files in the directories or they will be overwritten.
-If processing is interrupted, you may have to move the `.orig` files back to
-the original filenames without the `.orig` extension.
+During processing, files will be moved to `<filename>~`.
+If processing is interrupted, you may have to move the `~` files back to
+the original filenames without the `~` extension.
 
 Typically there will be some cases where an include is flagged as redundant,
 but it is appropriate to keep it according to the "include what you use"

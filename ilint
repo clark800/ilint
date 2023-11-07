@@ -27,16 +27,18 @@ check_build() {
 process_file() {
     path="$1"
     basename="$(basename "$path" ".${path##*.}")"
-    mv "$path" "$path.orig"
-    grep -n '^#include' "$path.orig" | cut -d':' -f1 |
+    orig="$path~"
+    while [ -e "$orig" ]; do orig="$orig~"; done
+    mv "$path" "$orig"
+    grep -n '^#include' "$orig" | cut -d':' -f1 |
     while read -r lineno; do
-        line="$(sed "${lineno}q;d" "$path.orig")"
+        line="$(sed "${lineno}q;d" "$orig")"
         if [ "${line%.*}." != "#include \"$basename." ]; then
-            sed "${lineno}d" "$path.orig" > "$path"
+            sed "${lineno}d" "$orig" > "$path"
             check_build "$path"
         fi
     done
-    mv "$path.orig" "$path"
+    mv "$orig" "$path"
 }
 
 process_directory() {
