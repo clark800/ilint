@@ -8,7 +8,7 @@ if it breaks the build.
 To run, `cd` to the directory where your makefile or build script is and run
 `ilint [<path>]...` where `<path>` is the path to the source directory or
 source file that you want to check.
-If no `<path>` is not specified it will default to the current directory.
+If no `<path>` is specified it will default to the current directory.
 All C/C++ files and header files in each `<path>` will be checked.
 If your build command is non-standard, you can set the `BUILD` environment
 variable to your build command.
