@@ -13,10 +13,6 @@ All C/C++ files and header files in each `<path>` will be checked.
 If your build command is non-standard, you can set the `BUILD` environment
 variable to your build command.
 
-During processing, files will be moved to `<filename>~`.
-If processing is interrupted, you may have to move the `~` files back to
-the original filenames without the `~` extension.
-
 Typically there will be some cases where an include is flagged as redundant,
 but it is appropriate to keep it according to the "include what you use"
 paradigm. This can happen when a header file includes other header files, which
