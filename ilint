@@ -17,7 +17,7 @@ build() {
 
 check_build() {
     path="$1"
-    if build >/dev/null 2>/dev/null; then
+    if CFLAGS="-O0" CXXFLAGS="-O0" build >/dev/null 2>/dev/null; then
         echo "$path:$lineno REDUNDANT"
     else
         echo "$path:$lineno required"
