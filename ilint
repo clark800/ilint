@@ -18,9 +18,9 @@ build() {
 check_build() {
     path="$1"
     if CFLAGS="-O0" CXXFLAGS="-O0" build >/dev/null 2>/dev/null; then
-        echo "$path:$lineno REDUNDANT"
+        echo "${path#./}:$lineno REDUNDANT"
     else
-        echo "$path:$lineno required"
+        echo "${path#./}:$lineno required"
     fi
 }
 
@@ -49,16 +49,17 @@ process_directory() {
 }
 
 main() {
-    path="${1:-.}"
     if ! build >/dev/null 2>/dev/null; then
         echo "Error: initial test build failed"
         exit 1
     fi
-    if [ -d "$path" ]; then
-        process_directory "$path"
-    else
-        process_file "$path"
-    fi
+    for path in "${@:-.}"; do
+        if [ -d "$path" ]; then
+            process_directory "$path"
+        else
+            process_file "$path"
+        fi
+    done
 }
 
 main "$@"
